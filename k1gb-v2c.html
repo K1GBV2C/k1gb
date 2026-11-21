@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#050912">
 <title>K1GB V2C</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root{
   --bg:#050912;
@@ -410,6 +411,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px var(--blue))}
 </div>
 <div id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* ====== CHANGE THESE ====== */
 const PRODUCTS = [
@@ -532,7 +534,7 @@ $('#vmodal').addEventListener('click',e=>{ if(e.target.id==='vmodal' || e.target
 document.addEventListener('click',e=>{ const vd = e.target.closest('[data-vid]'); if(vd) openVideo(vd.dataset.vid); });
 
 /* map */
-let MAP = null, FOG = null, MAP_LOADING = false;
+let MAP = null, FOG = null;
 const placePhotos = pl => pl.photos || (pl.photo ? [pl.photo] : []);
 function mpPick(btn,pi,i){                 // tap a small picture in the pin popup to show it big
   const box = btn.closest('.mp');
@@ -565,17 +567,8 @@ function drawFog(){
 function initMap(){
   if(MAP){ MAP.invalidateSize(); drawFog(); return; }
   const box = $('#mapBox');
-  if(typeof L === 'undefined'){            // the map files are loaded only when the Map page is opened
-    if(MAP_LOADING) return;
-    MAP_LOADING = true;
-    box.innerHTML = '<div class="empty" style="padding:40px 20px">Loading map...</div>';
-    const css = document.createElement('link'); css.rel = 'stylesheet';
-    css.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css'; document.head.appendChild(css);
-    const sc = document.createElement('script');
-    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
-    sc.onload = () => { MAP_LOADING = false; box.innerHTML = ''; initMap(); };
-    sc.onerror = () => { MAP_LOADING = false; box.innerHTML = '<div class="empty" style="padding:40px 20px">The map needs internet. Please connect and open this page again.</div>'; };
-    document.head.appendChild(sc);
+  if(typeof L === 'undefined'){
+    box.innerHTML = '<div class="empty" style="padding:40px 20px">The map needs internet. Please connect and open this page again.</div>';
     return;
   }
   MAP = L.map(box,{zoomAnimation:false,minZoom:2,maxBounds:[[-85,-180],[85,180]],maxBoundsViscosity:1});
